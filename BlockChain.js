@@ -24,7 +24,7 @@ class Blockchain {
   generateGenesisBlock() {
     this.getBlockHeight()
         .then((height) => {
-          if (height == 0) {
+          if (height == -1) {
             this.addBlock(new Block.Block('genesis block!'))
                 .then((block) => {
                   console.log(`Chain started with Genesis block: ${block}`);
@@ -34,13 +34,13 @@ class Blockchain {
   }
 
   /**
-   * Get block height, it is a helper method that return the height of the blockchain
-   * @return  {Promise<number>} A Promise that represent the chain height
+   * Get block height, it is a helper method that return the height of the current block on Blockchain
+   * @return  {Promise<number>} A Promise that represent the current chain height
    */
   getBlockHeight() {
     return this.bd.getBlocksCount()
         .then(function(count) {
-          return count;
+          return count -1;
         });
   }
 
@@ -55,7 +55,7 @@ class Blockchain {
           .then((count) => {
             let output = [];
             let promisePool = [];
-            for (let i = 0; i < count; i++) {
+            for (let i = 0; i <= count; i++) {
               promisePool.push(self.getBlock(i)
                   .then(function(block) {
                     output[i] = JSON.stringify(block, null, ' ');
@@ -84,9 +84,9 @@ class Blockchain {
     return new Promise(function(resolve, reject) {
       self.getBlockHeight()
           .then((count) => {
-            block.height = count;
-            if (count > 0) {
-              return self.getBlock(count - 1)
+            block.height = count + 1;
+            if (block.height > 0) {
+              return self.getBlock(count)
                   .then((previousBlock) => {
                     block.previousBlockHash = previousBlock.hash;
                     return block;
@@ -187,7 +187,7 @@ class Blockchain {
       let promisePool = [];
       self.getBlockHeight()
           .then((count) => {
-            for (let i = 0; i < count; i++) {
+            for (let i = 0; i <= count; i++) {
               promisePool.push(self.validateBlock(i)
                   .then(function() {
                     // all right, nothing happens
