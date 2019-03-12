@@ -25,7 +25,7 @@
 2. Geração de Wallet offline:
     Instruções: [How to generate private key offline with Bitaddress](https://github.com/bigmob/cryptosteel-tutorial/wiki/How-to-generate-private-key-offline-with-Bitaddress)
 
-    página [Bitaddres offline](bitaddress.org - offline Bitcoin Wallet Generator.html).
+    página [Bitaddres offline](bitaddress.org%20-%20offline%20Bitcoin%20Wallet%20Generator.html).
 
 3. Software de gerenciamento de carteira.
     Opções [aqui](https://bitcoin.org/en/choose-your-wallet).
