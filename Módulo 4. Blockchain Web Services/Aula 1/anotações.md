@@ -70,3 +70,13 @@
 14. Node é single-threaded, non-blocking e assíncrono. É baseado no Google V8 e é eficiente em uso de memória. E utilizado por grandes empresas e tem um grande ecossistema de bibliotecas.
 
 15. repositório para exercício: <https://github.com/udacity/nd1309_exercise_client_server>
+
+16. Coisas para manter em mente para testar com dados simulados:
+    1. o que acontece quando o tamanho do bloco cresce?
+    2. o que acontece quando o blockchain cresce?
+    3. como está o desempenho da rede?
+    4. o que acontece em caso de dados corrompidos?
+
+17. app para testar API: [Postman](https://www.getpostman.com/)
+
+18. sugestão para aprender mais: ferramenta [curl](https://curl.haxx.se/book.html)

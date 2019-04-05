@@ -4,6 +4,11 @@ const http = require('http');
 
 //Step 1. Import crypto-js/sha256
 
+/* ===== Crypto-js library ==========================
+|  Learn more: https://github.com/brix/crypto-js    |
+/==================================================*/
+
+const SHA256 = require('crypto-js/sha256');
 
 // Http port
 const port = 8080;
@@ -21,7 +26,12 @@ blocks.push(block_2);
  */
 //Add your code here
 
-
+const app = http.createServer(function (request, response) {
+  response.writeHead(200, {"Content-Type" : "text/html"})
+  hash = SHA256(JSON.stringify(blocks[1])).toString();
+  response.write(hash) //hash
+  response.end()
+})
 
 // Notify console
 console.log("Web Server started on port 8080\nhttp://localhost:"+port);
