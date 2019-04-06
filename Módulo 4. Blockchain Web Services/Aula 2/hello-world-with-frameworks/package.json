@@ -1,0 +1,14 @@
+{
+  "name": "hello-world-with-frameworks",
+  "version": "1.0.0",
+  "description": "Test of JS frameworks for Web Services",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Bruno Arruda",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
