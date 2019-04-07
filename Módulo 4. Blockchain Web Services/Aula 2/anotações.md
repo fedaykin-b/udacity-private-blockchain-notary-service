@@ -10,4 +10,4 @@
 
 4. Documentação com lista de módulos do Express: <https://expressjs.com/en/resources/middleware.html>
 
-5.
+5. Lista de conteúdos para aprender Hapi: <https://hapijs.com/resources>
