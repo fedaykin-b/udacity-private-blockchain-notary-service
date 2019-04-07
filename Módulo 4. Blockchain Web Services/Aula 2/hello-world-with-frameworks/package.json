@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.16.4",
-    "hapi": "^18.1.0"
+    "hapi": "^18.1.0",
+    "sails": "^1.1.0"
   }
 }
