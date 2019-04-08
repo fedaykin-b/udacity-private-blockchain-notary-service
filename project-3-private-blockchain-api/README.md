@@ -2,7 +2,7 @@
 
 ## Project #3. Private Blockchain
 
-An improvement over [Project 2](../project-2-private-blockchain), adding an API to get blocks with GET method and add data to a block with POST method.
+An improvement over [Project 2](https://github.com/brunoarruda/Udacity-Nanodegree-Blockchain-Developer/tree/projeto-2/project-2-private-blockchain), adding an API to get blocks with GET method and add data to a block with POST method.
 
 ### Installing
 
