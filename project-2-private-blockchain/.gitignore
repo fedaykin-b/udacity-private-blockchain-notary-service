@@ -1,7 +1,5 @@
 # Dependency Directory
 node_modules/
-# Bower dependency directory (https://bower.io/)
-bower_components
 
 # Local files
 .vscode/
@@ -9,5 +7,5 @@ build/
 npm-debug.log
 .env/
 
-# data
+# data folder
 chaindata/
