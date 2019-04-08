@@ -3,6 +3,8 @@
 
 # Project #2. Private Blockchain
 
+A naive private blockchain without consensus protocols that uses promises for async processing and LevelDB for data persistence. It's The second assignment of the Udacity Blockchain Developer Nanodegree.
+
 ## Installing
 
 To setup the project for review do the following:
@@ -13,7 +15,7 @@ To setup the project for review do the following:
 
 ## Testing the project
 
-The file __simpleChain.js__ in the root directory has all the code to be able to test the project, please review the comments in the file and uncomment the code to be able to test each feature implemented:
+The file __simpleChain.js__ in the root directory has all the code for testing the project, you just need to uncomment the functions in order to test each feature implemented:
 
 * Uncomment the function:
 
