@@ -2,6 +2,8 @@
 
 ## Project #3. Private Blockchain
 
+An improvement over [Project 2](../project-2-private-blockchain), adding an API to get blocks with GET method and add data to a block with POST method.
+
 ### Installing
 
 To setup the project for review do the following:
@@ -36,15 +38,21 @@ In case there is no such a block, the API will return an JSON as below:
 
 **POST**
 
-```http://localhost:8000/block/?data=content```should create a new Block carrying ```content``` on its body.
-
-Empty blocks should not be accepted, so it was added to [```INVALID_DATA```](BlockchainController.js#L7) some common representations of empty strings that could be put by a user.
-
-In case where ```content``` is invalid, the API will return an JSON as below:
+```http://localhost:8000/block/``` creates a new Block. Data should be on the body of message, in the form:
 
 ```json
 {
-    "error": "Invalid or empty data. Block not created",
+    "body": "content to be added to chain"
+}
+```
+
+ Be sure to set ```Content-type``` to ```application/json``` on the POST request.
+
+blocks with empty body should not be accepted, so it was added to [```INVALID_DATA```](BlockchainController.js#L7) some common representations of empty strings that could be put by a user. In case where ```content``` is rejected, the API will return an JSON as below:
+
+```json
+{
+    "error": "Invalid or empty block body. Block not created",
     "height": "height"
 }
 ```

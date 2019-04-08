@@ -51,16 +51,16 @@ class BlockController {
             path: '/block/',
             handler: async (request, h) => {
                 let index = await this.blockChain.getBlockHeight() + 1;
-                let is_invalid = (!request.query.data) ? true : false
+                let is_invalid = (!request.payload.body) ? true : false
                 INVALID_DATA.forEach(element => {
-                    if (request.query.data == element) {
+                    if (request.payload.body == element) {
                         is_invalid = true;
                     }
                 });
                 if (is_invalid) {
-                    return `{"error": "Invalid or empty data. Block not created", "height": "${index}"}`
+                    return `{"error": "Invalid or empty block body. Block not created", "height": "${index}"}`
                 }
-                let blockAux = new Block.Block(request.query.data);
+                let blockAux = new Block.Block(request.payload.body);
                 await this.blockChain.addBlock(blockAux)
                 return JSON.stringify(blockAux)
             }
