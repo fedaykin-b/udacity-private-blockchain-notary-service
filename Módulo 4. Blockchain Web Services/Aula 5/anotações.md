@@ -27,3 +27,16 @@
 Para decodificar use:
 
 ```echo string|xxd -p - r``` or ```xxd -p -r encoded_file decoded_file```
+
+9. Prova de existência (Proof of Existence - POE): pode-se calcular o hash de um arquivo e publicá-lo em um blockchain, a fim de provar de que tal documento existia em certa data. Isso equivale ao serviço de um cartório tradicional que registra um documento, a fim de provar sua existência.
+
+10. POE geralmente utiliza SHA256 ou MD5.
+
+11. Assegurar um ativo é protegê-lo contra alterações por acidente ou fraudulentas.
+
+12. Sobre blockchains, o bitcoin é denominado como de 1ª geração, e o Ethereum de 2ª direção. Isso porque o Ethereum adicionou a opção de criar contratos inteligentes.
+    1. Blockchains de 1ª geração focam em transferências de ativos, funcionando de forma similar a uma moeda.
+    2. Blockchains de 2ª geração focam em transações, e disponibilizam estruturas de código que podem processar as transações, denominadas como 'smart contracts'.
+    3. ambos mantêm a dependência da estrutura de dados em forma de blocos, com transações publicamente acessíveis e carteiras representando usuários no sistema.
+
+
