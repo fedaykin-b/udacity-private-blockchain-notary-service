@@ -4,7 +4,7 @@ const SHA256 = require('crypto-js/sha256');
 const BlockChain = require('./private-blockchain/BlockChain');
 const Block = require('./private-blockchain/Block')
 
-const INVALID_DATA = ['""', "''", " ", '" "']
+const EMPTY_DATA = ['""', "''", " ", '" "']
 /**
  * Controller Definition to encapsulate routes to work with blocks
  */
@@ -19,9 +19,10 @@ class BlockController {
         this.blockChain = new BlockChain.Blockchain();
         if (populate_data) {
             this.initializeMockData();
-        }
+        }        
         this.getBlockByIndex();
         this.postNewBlock();
+        this.postRequestValidation();
     }
 
     /**
@@ -43,6 +44,25 @@ class BlockController {
     }
 
     /**
+     * 
+     * @param {*} data 
+     * @param {string} field 
+     * @param {Array<string>} empty_patterns 
+     * @return {boolean} is_empty
+     */
+    _isEmptyData(data, field, empty_patterns = EMPTY_DATA) {
+      if (data == null || data[field] == null) {
+        return true
+      }
+      for (var p in empty_patterns) {
+        if (data[field] == p) {
+          return true
+        }
+      }
+      return false
+    }
+
+    /**
      * Implement a POST Endpoint to add a new Block, url: "/api/block"
      */
     postNewBlock() {
@@ -51,20 +71,30 @@ class BlockController {
             path: '/block/',
             handler: async (request, h) => {
                 let index = await this.blockChain.getBlockHeight() + 1;
-                let is_invalid = (!request.payload.body) ? true : false
-                INVALID_DATA.forEach(element => {
-                    if (request.payload.body == element) {
-                        is_invalid = true;
-                    }
-                });
-                if (is_invalid) {
-                    return `{"error": "Invalid or empty block body. Block not created", "height": "${index}"}`
+                if (this._isEmptyData(request.payload, 'body')) {
+                    return `{"error": "There was no input or body was empty. Block not created", "height": "${index}"}`
                 }
                 let blockAux = new Block.Block(request.payload.body);
                 await this.blockChain.addBlock(blockAux)
                 return JSON.stringify(blockAux)
             }
         });
+    }
+
+    /**
+     * Implement a POST endpoint to receive a validation for future submission of a star to the notary.
+     */
+    postRequestValidation() {
+      this.server.route({
+        method: 'POST',
+        path: '/requestValidation/',
+        handler: (request, h) => {
+          if(this._isEmptyData(request.payload, 'address')) {
+            return '{"error": "No address field on JSON input. Validation not created"}'
+          }
+          return 'Not implemented'
+        }
+      })
     }
 
     /**
