@@ -1,26 +1,36 @@
 /**
  * Class representing a Request Validation
  */
-class RequestValidation {
+
+const TIME_REQUEST_WINDOW_TIME = 5 * 60 * 1000 // milliseconds
+class Request {
 
   /**
-   * 
-   * @param {JSON} address 
+   *
+   * @param {JSON} address
    */
-  constructor(request) {
-    this.address = request.address;
+  constructor(address) {
+    this.address = address;
     this.requestTimeStamp = new Date().getTime().toString().slice(0, -3);
     this.message = this.writeMessage()
-    this.validationWindow = this.countTimeWindow()
   }
 
   writeMessage() {
-    return 'Not implemented.'
+    return `${this.address}:${this.requestTimeStamp}:starRegistry`
   }
 
   countTimeWindow() {
-    return 'Not implemented.'
+    let timeElapse = (new Date().getTime().toString().slice(0, -3)) - this.requestTimeStamp;
+    this.validationWindow = (TIME_REQUEST_WINDOW_TIME / 1000) - timeElapse
+    return this
+  }
+
+  prepareSelfDestruction(mempool) {
+    setTimeout(() => {
+      mempool[this.address] = null
+    }, TIME_REQUEST_WINDOW_TIME);
+    return this
   }
 }
 
-module.exports.RequestValidation = RequestValidation
+module.exports.Request = Request

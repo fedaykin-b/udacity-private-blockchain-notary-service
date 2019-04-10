@@ -1,8 +1,8 @@
 {
-  "name": "project_3",
+  "name": "project_4",
   "version": "1.0.0",
-  "description": "Project 3 - Create an API for your Private Blockchain",
-  "main": "simpleChain.js",
+  "description": "Project 4 - Create a Private Blockchain for Notary Service",
+  "main": "apps.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,6 +15,7 @@
     "hapi": "^18.1.0",
     "hex2ascii": "0.0.3",
     "level": "^4.0.0",
+    "leveldown": "^5.0.1",
     "yargs": "^13.2.2"
   },
   "devDependencies": {

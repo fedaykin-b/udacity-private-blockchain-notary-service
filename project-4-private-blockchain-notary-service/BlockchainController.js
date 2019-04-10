@@ -3,6 +3,7 @@
 const SHA256 = require('crypto-js/sha256');
 const BlockChain = require('./private-blockchain/BlockChain');
 const Block = require('./private-blockchain/Block')
+const Request = require('./Request')
 
 const EMPTY_DATA = ['""', "''", " ", '" "']
 /**
@@ -16,10 +17,11 @@ class BlockController {
      */
     constructor(server, populate_data) {
         this.server = server;
+        this.mempool = []
         this.blockChain = new BlockChain.Blockchain();
         if (populate_data) {
             this.initializeMockData();
-        }        
+        }
         this.getBlockByIndex();
         this.postNewBlock();
         this.postRequestValidation();
@@ -44,10 +46,10 @@ class BlockController {
     }
 
     /**
-     * 
-     * @param {*} data 
-     * @param {string} field 
-     * @param {Array<string>} empty_patterns 
+     *
+     * @param {*} data
+     * @param {string} field
+     * @param {Array<string>} empty_patterns
      * @return {boolean} is_empty
      */
     _isEmptyData(data, field, empty_patterns = EMPTY_DATA) {
@@ -90,9 +92,14 @@ class BlockController {
         path: '/requestValidation/',
         handler: (request, h) => {
           if(this._isEmptyData(request.payload, 'address')) {
-            return '{"error": "No address field on JSON input. Validation not created"}'
+            return '{"error": "No address field on JSON input."}'
           }
-          return 'Not implemented'
+          let address = request.payload.address
+          if (this.mempool[address] == null) {
+              let new_request = new Request.Request(address)
+              this.mempool[address] = new_request.prepareSelfDestruction(this.mempool)
+          }
+            return this.mempool[address].countTimeWindow()
         }
       })
     }
@@ -124,5 +131,6 @@ class BlockController {
 /**
  * Exporting the BlockController class
  * @param {*} server
+ * @param {boolean} populate_data
  */
 module.exports = (server, populate_data) => { return new BlockController(server, populate_data);}
