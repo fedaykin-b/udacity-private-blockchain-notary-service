@@ -4,13 +4,14 @@ const SHA256 = require('crypto-js/sha256');
 const BlockChain = require('./private-blockchain/BlockChain');
 const Block = require('./private-blockchain/Block')
 const Request = require('./Request')
+const Validation = require('./Validation')
 
 const EMPTY_DATA = ["", '""', "''", " ", '" "', "' '"]
 /**
 * Controller Definition to encapsulate routes to work with blocks
 */
 class BlockController {
-  
+
   /**
   * Constructor to create a new BlockchainController
   * @param {*} server
@@ -18,6 +19,7 @@ class BlockController {
   constructor(server, populate_data) {
     this.server = server;
     this.mempool = []
+    this.mempoolValid = []
     this.blockChain = new BlockChain.Blockchain();
     if (populate_data) {
       this.initializeMockData();
@@ -33,7 +35,7 @@ class BlockController {
       }
     });
   }
-  
+
   /**
   * Implement a GET Endpoint to retrieve a block by index, url: "/api/block/:index"
   */
@@ -51,7 +53,7 @@ class BlockController {
       }
     });
   }
-  
+
   /**
   *
   * @param {*} data
@@ -66,14 +68,14 @@ class BlockController {
 
     if (data[field] == null) {
       throw new TypeError(`{"error": "No ${field} key on JSON input."}`)
-    }    
+    }
     for (var i in empty_patterns) {
       if (data[field] == empty_patterns[i]) {
         throw new TypeError(`{"error": "${field} key is empty."}`)
       }
     }
   }
-  
+
   /**
   * Implement a POST Endpoint to add a new Block, url: "/api/block"
   */
@@ -93,7 +95,7 @@ class BlockController {
       }
     });
   }
-  
+
   /**
   * Implement a POST endpoint to receive a validation for future submission of a star to the notary.
   */
@@ -116,7 +118,7 @@ class BlockController {
       }
     })
   }
-  
+
   postSignRequest() {
     this.server.route({
       method: 'POST',
@@ -128,11 +130,20 @@ class BlockController {
         } catch (err) {
           return err.message
         }
-        return 'not implemented'
+        let address = request.payload.address
+        console.log(this.mempool)
+        if (this.mempool[address] != null) {
+          let validation = new Validation.Validation(this.mempool[address], request.payload.signature)
+          this.mempoolValid[address] = validation.prepareSelfDestruction(this.mempoolValid)
+          this.mempool[address] = null
+        } else if (this.mempoolValid[address] == null) {
+          return '{"error":"request validation not found or expired."}'
+        }
+        return this.mempoolValid[address].countTimeWindow()
       }
-    })            
+    })
   }
-  
+
   /**
   * Help method to initialized Mock dataset, adds 10 test blocks to the blocks array
   */

@@ -1,5 +1,5 @@
 /**
- * Class representing a Request Validation
+ * Class representing a Request for publishing on StarRegistry
  */
 
 const TIME_REQUEST_WINDOW_TIME = 5 * 60 * 1000 // milliseconds
