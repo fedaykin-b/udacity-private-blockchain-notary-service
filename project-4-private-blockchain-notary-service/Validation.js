@@ -9,7 +9,7 @@ class Validation {
 
   /**
    *
-   * @param {Request.Request} address
+   * @param {Request.Request} request
    * @param {string} signature
    */
   constructor(request, signature) {
@@ -29,8 +29,14 @@ class Validation {
    * @param {string} signature
    */
   verifySignature(signature) {
-    let is_valid = bitcoinMessage.verify(this.status.message, this.status.address, signature)
+    let is_valid = false
+    try {
+      is_valid = bitcoinMessage.verify(this.status.message, this.status.address, signature)
+    } catch (err){
+      console.warn(err)
+    }
     this.status.messageSignature = is_valid
+    return this
   }
 
   countTimeWindow() {

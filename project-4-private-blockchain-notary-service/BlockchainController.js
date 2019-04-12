@@ -65,14 +65,22 @@ class BlockController {
     if (data == null) {
       throw new TypeError('{"error": "No JSON input."}')
     }
-
-    if (data[field] == null) {
-      throw new TypeError(`{"error": "No ${field} key on JSON input."}`)
-    }
-    for (var i in empty_patterns) {
-      if (data[field] == empty_patterns[i]) {
-        throw new TypeError(`{"error": "${field} key is empty."}`)
+    //added recursion to support multiple fields checking
+    if (typeof field == 'object') {
+      for (var i in field) {
+        this._isEmptyData(data, field[i], empty_patterns)
       }
+    } else if (typeof field == 'string') {
+      if (data[field] == null) {
+        throw new TypeError(`{"error": "No ${field} key on JSON input."}`)
+      }
+      for (var i in empty_patterns) {
+        if (data[field] == empty_patterns[i]) {
+          throw new TypeError(`{"error": "${field} key is empty."}`)
+        }
+      }
+    } else {
+      throw new TypeError(`{"error": "${field} can not be checked if is empty or not}`)
     }
   }
 
@@ -85,7 +93,8 @@ class BlockController {
       path: '/block/',
       handler: async (request, h) => {
         try {
-          this._isEmptyData(request.payload, 'body')
+          this._isEmptyData(request.payload, 'address')
+          this._isEmptyData(request.payload.star, ['dec', 'ra', 'story'])
         } catch (err) {
           return err.message
         }
@@ -125,21 +134,21 @@ class BlockController {
       path: '/message-signature/validate/',
       handler: (request, h) => {
         try {
-          this._isEmptyData(request.payload, 'address')
-          this._isEmptyData(request.payload, 'signature')
+          this._isEmptyData(request.payload, ['address', 'signature'])
         } catch (err) {
           return err.message
         }
         let address = request.payload.address
+        let signature = request.payload.signature
         console.log(this.mempool)
         if (this.mempool[address] != null) {
-          let validation = new Validation.Validation(this.mempool[address], request.payload.signature)
+          let validation = new Validation.Validation(this.mempool[address], signature)
           this.mempoolValid[address] = validation.prepareSelfDestruction(this.mempoolValid)
           this.mempool[address] = null
         } else if (this.mempoolValid[address] == null) {
           return '{"error":"request validation not found or expired."}'
         }
-        return this.mempoolValid[address].countTimeWindow()
+        return this.mempoolValid[address].countTimeWindow().verifySignature(signature)
       }
     })
   }
