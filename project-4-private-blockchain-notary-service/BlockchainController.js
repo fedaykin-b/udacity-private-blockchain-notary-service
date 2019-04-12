@@ -7,6 +7,8 @@ const Request = require('./Request')
 const Validation = require('./Validation')
 
 const EMPTY_DATA = ["", '""', "''", " ", '" "', "' '"]
+const MAX_STRING_FIELD_BYTE_SIZE = 500
+
 /**
 * Controller Definition to encapsulate routes to work with blocks
 */
@@ -57,7 +59,7 @@ class BlockController {
   /**
   *
   * @param {*} data
-  * @param {string} field
+  * @param {Array<string> | string} field
   * @param {Array<string>} empty_patterns
   * @return {boolean} is_empty
   */
@@ -85,6 +87,31 @@ class BlockController {
   }
 
   /**
+   * 
+   * @param {string} story
+   * @return {boolean} is_validStory
+   */
+  _isValidStarStory(story) {
+    let ascii_range =  /^[\x00-\x7F]*$/
+    if (!ascii_range.test(story) || Buffer.byteLength(story) > MAX_STRING_FIELD_BYTE_SIZE) {
+      throw new TypeError(`{"error":"story exceeds maximum length of 500 bytes or isn't ASCII encoded}`)
+    }
+  }
+  /**
+   * 
+   * @param {JSON} json 
+   * @param {Array<string>} expected_field 
+   */
+  _hasOnlyExpectedFields(json, expected_field) {
+    let field = Object.keys(json)
+    for (var i in field) {
+      if (expected_field.indexOf(field[i]) == -1) {
+        return `{"error": "unexpected field ${field[i]} found in request. Block not created}`
+      }
+    }
+  }
+
+  /**
   * Implement a POST Endpoint to add a new Block, url: "/api/block"
   */
   postNewBlock() {
@@ -93,12 +120,26 @@ class BlockController {
       path: '/block/',
       handler: async (request, h) => {
         try {
-          this._isEmptyData(request.payload, 'address')
+          this._isEmptyData(request.payload, ['address', 'star'])
           this._isEmptyData(request.payload.star, ['dec', 'ra', 'story'])
+          
+          // filter badly formatted requests with unexpected fields
+          this._hasOnlyExpectedFields(request.payload, ['address', 'star'])
+          this._hasOnlyExpectedFields(request.payload.star, ['dec', 'ra', 'story'])
+
+          //checks whether story is ASCII and has maximum size of 500 bytes
+          this._isValidStarStory(request.payload.star.story)
         } catch (err) {
           return err.message
         }
-        let blockAux = new Block.Block(request.payload.body);
+        //TODO Verify that the "address" that send the Star was validated in the previous steps, if not respond back with an error.
+        let address = request.payload.address
+        if(this.mempoolValid[address] == null) {
+          return '{"error":"validation not found or expired."}'
+        } else {
+          this.mempoolValid[address] = null
+        }
+        let blockAux = new Block.Block(request.payload);
         await this.blockChain.addBlock(blockAux)
         return JSON.stringify(blockAux)
       }
@@ -140,7 +181,6 @@ class BlockController {
         }
         let address = request.payload.address
         let signature = request.payload.signature
-        console.log(this.mempool)
         if (this.mempool[address] != null) {
           let validation = new Validation.Validation(this.mempool[address], signature)
           this.mempoolValid[address] = validation.prepareSelfDestruction(this.mempoolValid)

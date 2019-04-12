@@ -12,7 +12,8 @@ class Block {
   constructor(data, time = 0, height = 0, previousBlockHash = '') {
     this.hash = '';
     this.height = height;
-    this.body = data;
+    this.body = data
+    this.body.story = Buffer.from(data.star.story, 'ascii').toString('hex')
     this.time = time;
     this.previousBlockHash = previousBlockHash;
   }
