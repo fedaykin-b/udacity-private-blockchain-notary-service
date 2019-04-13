@@ -15,8 +15,7 @@
     "hapi": "^18.1.0",
     "hex2ascii": "0.0.3",
     "level": "^4.0.0",
-    "leveldown": "^5.0.1",
-    "yargs": "^13.2.2"
+    "leveldown": "^5.0.1"
   },
   "devDependencies": {
     "eslint": "^5.16.0",

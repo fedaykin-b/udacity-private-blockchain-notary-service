@@ -18,14 +18,11 @@ class BlockController {
   * Constructor to create a new BlockchainController
   * @param {*} server
   */
-  constructor(server, populate_data) {
+  constructor(server) {
     this.server = server;
     this.mempool = []
     this.mempoolValid = []
     this.blockChain = new BlockChain.Blockchain();
-    if (populate_data) {
-      this.initializeMockData();
-    }
 
     // Automatic routing register
     // If a object function starts with 'get' or 'post', it is executed, registering its routing on the server.
@@ -267,4 +264,4 @@ class BlockController {
 * @param {*} server
 * @param {boolean} populate_data
 */
-module.exports = (server, populate_data) => { return new BlockController(server, populate_data);}
+module.exports = (server) => { return new BlockController(server);}

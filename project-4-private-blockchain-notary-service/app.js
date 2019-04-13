@@ -1,5 +1,4 @@
 const Hapi = require('hapi');
-const argv = require('yargs').alias('p', 'populate-data').argv
 
 const PORT = 8000
 /**
@@ -23,7 +22,7 @@ class BlockAPI {
      * Initialization of all the controllers
      */
 	initControllers() {
-        require("./BlockchainController.js")(this.server, argv.p);
+        require("./BlockchainController.js")(this.server);
 	}
 
     async start() {
