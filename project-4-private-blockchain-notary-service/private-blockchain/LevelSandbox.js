@@ -18,7 +18,7 @@ class LevelSandbox {
   /**
    * Get data from levelDB with key
    * @param {number} key
-   * @return {Promise<*|undefined|Error>} - A Promise that resolves with either the corresponding value or undefined if not found, or rejects with Error.
+   * @return {Promise<string|null|Error>} - A Promise that resolves with either the corresponding value or undefined if not found, or rejects with Error.
    */
   getLevelDBData(key) {
     let self = this;
@@ -26,7 +26,7 @@ class LevelSandbox {
       self.db.get(key, function(err, value) {
         if (err) {
           if (err.type == 'NotFoundError') {
-            resolve(undefined);
+            resolve(null);
           } else {
             console.log('Block ' + key + ' get failed', err);
             reject(err);
@@ -37,12 +37,45 @@ class LevelSandbox {
     });
   }
 
+  /**
+   *
+   * @param {string} value
+   * @param {string} field
+   * @return {Promise<Array<string>|null|Error>}
+   */
+  getLevelDBDataByProperty(value, field) {
+    let self = this;
+    let block = [];
+    let nestedField = []
+    if (/\./.test(field)) {
+      nestedField = field.split('.')
+      field = nestedField.pop()
+    }
+    return new Promise(function (resolve, reject) {
+      self.db.createReadStream()
+        .on('data', function (data) {
+          let obj = JSON.parse(data.value)
+          //necessary to carry on the searching value inside nested objects
+          nestedField.forEach((innerField) => {obj = obj[innerField]})
+          if (obj[field] === value) {
+            block.push(data.value);
+          }
+        })
+        .on('error', function (err) {
+          reject(err)
+        })
+        .on('close', function () {
+          resolve(block);
+        });
+    });
+  }
+
   //
   /**
    * Add data to levelDB with key and value
    * @param {number} key
    * @param {*} value
-   * @return {Promise<*|Error>} - A Promise that add the (key, value) on db and resolves with value, or rejects with Error.
+   * @return {Promise<string|Error>} - A Promise that add the (key, value) on db and resolves with value, or rejects with Error.
    */
   addLevelDBData(key, value) {
     let self = this;

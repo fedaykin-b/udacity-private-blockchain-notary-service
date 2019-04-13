@@ -117,19 +117,55 @@ class Blockchain {
    * @return {Promise<Block.Block|Error>} - A Promise that resolves returning the block or reject with Error
    */
   getBlock(height) {
-    let self = this;
+    let self = this
     return new Promise(function(resolve, reject) {
-      self.bd.getLevelDBData(height)
+      self.bd.getLevelDBData(key)
           .then(function(value) {
-            if (typeof value === 'undefined') {
+            if (typeof value == null) {
               resolve();
             } else {
-              resolve(JSON.parse(value));
+              resolve(Object.assign(new Block.Block(''), JSON.parse(value)));
             }
           })
           .catch(function(err) {
             reject(err);
           });
+    });
+  }
+
+  getBlockByHash(hash) {
+    let self = this
+    return new Promise(function (resolve, reject) {
+      self.bd.getLevelDBDataByProperty(hash, 'hash')
+        .then(function (value_list) {
+          if (value_list.length == 0) {
+            resolve();
+          } else {
+            resolve(Object.assign(new Block.Block(''), JSON.parse(value_list[0])));
+          }
+        })
+        .catch(function (err) {
+          reject(err);
+        });
+    });
+  }
+
+  getBlocksByAddress(address) {
+    let self = this
+    return new Promise(function (resolve, reject) {
+      self.bd.getLevelDBDataByProperty(address, 'body.address')
+        .then(function (value_list) {
+          if (value_list.length == 0) {
+            resolve();
+          } else {
+            resolve(value_list.map((value) => {
+              return Object.assign(new Block.Block(''), JSON.parse(value))
+            }))
+          }
+        })
+        .catch(function (err) {
+          reject(err);
+        });
     });
   }
 

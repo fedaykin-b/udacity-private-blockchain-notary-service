@@ -46,14 +46,59 @@ class BlockController {
       method: 'GET',
       path: '/block/{index}',
       handler: async (request, h) => {
-        let block = await this.blockChain.getBlock(request.params.index)
+        let block = await this.blockChain.getBlock(Number(request.params.index))
         if (block == null) {
           console.log(`block ${request.params.index} not found`)
           return `{"error": "Block not in the chain", "height": "${request.params.index}"}`
         }
+        block.decodeStory()
         return block
       }
     });
+  }
+  /**
+  * Implement a GET Endpoint to retrieve a block by index, url: "/api/stars/hash:hash"
+  */
+  getBlockByHash() {
+    this.server.route({
+      method: 'GET',
+      path: '/stars/hash:{hash}',
+      handler: async (request, h) => {
+        let hex_pattern = /^[0-9a-fA-F]+$/
+        if (!hex_pattern.test(request.params.hash) || request.params.hash.length > 64) {
+          return `{"error": "provided hash is not valid", "hash": "${request.params.hash}"}`
+        }
+        if (request.params.hash.length < 64) {
+          return `{"error": "partial hash search is not supported"}`
+        }
+        let block = await this.blockChain.getBlockByHash(request.params.hash)
+        if (block == null) {
+          console.log(`block ${request.params.hash} not found`)
+          return `{"error": "Block not in the chain", "hash": "${request.params.hash}"}`
+        }
+        block.decodeStory()
+        return block
+      }
+    })
+  }
+
+  /**
+  * Implement a GET Endpoint to retrieve a block by index, url: "/api/stars/address:address"
+  */
+  getBlocksByAddress() {
+    this.server.route({
+      method: 'GET',
+      path: '/stars/address:{address}',
+      handler: async (request, h) => {
+        let blocks = await this.blockChain.getBlocksByAddress(request.params.address)
+        if (blocks == null) {
+          console.log(`block ${request.params.address} not found`)
+          return `{"error": "no Block in the chain have this address", "address": "${request.params.address}"}`
+        }
+        blocks.map((block) => {return block.decodeStory()})
+        return blocks
+      }
+    })
   }
 
   /**
@@ -87,7 +132,7 @@ class BlockController {
   }
 
   /**
-   * 
+   *
    * @param {string} story
    * @return {boolean} is_validStory
    */
@@ -98,9 +143,9 @@ class BlockController {
     }
   }
   /**
-   * 
-   * @param {JSON} json 
-   * @param {Array<string>} expected_field 
+   *
+   * @param {JSON} json
+   * @param {Array<string>} expected_field
    */
   _hasOnlyExpectedFields(json, expected_field) {
     let field = Object.keys(json)
@@ -122,7 +167,7 @@ class BlockController {
         try {
           this._isEmptyData(request.payload, ['address', 'star'])
           this._isEmptyData(request.payload.star, ['dec', 'ra', 'story'])
-          
+
           // filter badly formatted requests with unexpected fields
           this._hasOnlyExpectedFields(request.payload, ['address', 'star'])
           this._hasOnlyExpectedFields(request.payload.star, ['dec', 'ra', 'story'])
