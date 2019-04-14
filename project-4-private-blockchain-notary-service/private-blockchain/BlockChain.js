@@ -119,7 +119,7 @@ class Blockchain {
   getBlock(height) {
     let self = this
     return new Promise(function(resolve, reject) {
-      self.bd.getLevelDBData(key)
+      self.bd.getLevelDBData(height)
           .then(function(value) {
             if (typeof value == null) {
               resolve();

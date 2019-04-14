@@ -43,7 +43,7 @@ class BlockController {
       method: 'GET',
       path: '/block/{index}',
       handler: async (request, h) => {
-        let block = await this.blockChain.getBlock(Number(request.params.index))
+        let block = await this.blockChain.getBlock(request.params.index)
         if (block == null) {
           console.log(`block ${request.params.index} not found`)
           return `{"error": "Block not in the chain", "height": "${request.params.index}"}`
@@ -53,6 +53,7 @@ class BlockController {
       }
     });
   }
+
   /**
   * Implement a GET Endpoint to retrieve a block by index, url: "/api/stars/hash:hash"
   */
@@ -90,7 +91,7 @@ class BlockController {
         let blocks = await this.blockChain.getBlocksByAddress(request.params.address)
         if (blocks == null) {
           console.log(`block ${request.params.address} not found`)
-          return `{"error": "no Block in the chain have this address", "address": "${request.params.address}"}`
+          return `{"error": "no Block in the chain have this address."}`
         }
         blocks.map((block) => {return block.decodeStory()})
         return blocks
@@ -124,7 +125,7 @@ class BlockController {
         }
       }
     } else {
-      throw new TypeError(`{"error": "${field} can not be checked if is empty or not}`)
+      throw new TypeError(`{"error": "${field} can not be checked if is empty or not}"`)
     }
   }
 
@@ -136,7 +137,7 @@ class BlockController {
   _isValidStarStory(story) {
     let ascii_range =  /^[\x00-\x7F]*$/
     if (!ascii_range.test(story) || Buffer.byteLength(story) > MAX_STRING_FIELD_BYTE_SIZE) {
-      throw new TypeError(`{"error":"story exceeds maximum length of 500 bytes or isn't ASCII encoded}`)
+      throw new TypeError(`{"error":"story exceeds maximum length of 500 bytes or isn't ASCII encoded}"`)
     }
   }
   /**
@@ -148,7 +149,7 @@ class BlockController {
     let field = Object.keys(json)
     for (var i in field) {
       if (expected_field.indexOf(field[i]) == -1) {
-        return `{"error": "unexpected field ${field[i]} found in request. Block not created}`
+        throw new TypeError(`{"error": "unexpected field ${field[i]} found in request. Block not created}"`)
       }
     }
   }
