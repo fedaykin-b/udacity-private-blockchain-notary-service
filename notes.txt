@@ -1,9 +1,15 @@
 // Block data model
 {
     "hash" : "",
-    "height" : 0,
-    "body": [],
+    "height" : 1,
+    "body": {
+        "address":"",
+        "star": {
+            "dec":"",
+            "ra":"",
+            "story":""
+        }
+    },
     "time": 0,
-    previousblockhash: ""
-
+    "previousblockhash": ""
 }
