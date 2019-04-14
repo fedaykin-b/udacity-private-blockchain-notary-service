@@ -1,10 +1,10 @@
 # Udacity Nanodegree "Blockchain Developer"
 
-## Project #4. Private Blockchain for a Descentralized Star Notary Service
+## Project #4. Private Blockchain for a Decentralized Star Notary Service
 
 An improvement over [Project 3 - A Private Blockchain with API](https://github.com/brunoarruda/Udacity-Nanodegree-Blockchain-Developer/tree/master/project-3-private-blockchain-api).
 
-This project implements a descentralized Star Notary Service, which allows to register information about stars after a request validation step.
+This project implements a decentralized Star Notary Service, which allows to register information about stars after a request validation step.
 
 ## Installing
 
@@ -74,7 +74,7 @@ returns a JSON string of the block with hash ```h```.
 
 ##### Result
 
-The results include those of [/block/h](./README.md#/block/h).
+The results include those of [/block/h](./README.md#blockh).
 
 Additionally, if the string is not hexadecimal or bigger than 65 chars, the response will be:
 
@@ -101,7 +101,7 @@ returns a JSON with a list of blocks submitted by an address ```a```.
 
 ##### Result
 
-In case it was found blocks with the address, the result will be a JSON list with nested objects similar to [/block/h](./README.md#/block/h)
+In case it was found blocks with the address, the result will be a JSON list with nested objects similar to [/block/h](./README.md#blockh)
 
 In case there is no block with that address, the API will return an JSON as below:
 
@@ -153,7 +153,7 @@ if ```address``` is empty, a message of error is returned instead:
 
 #### /message-signature/validate/
 
-validates a pending [request](./README.md#/requestValidation/) to publish on network.
+validates a pending [request](./README.md#requestValidation) to publish on network.
 
 ##### Parameters
 
@@ -194,7 +194,7 @@ if ```address``` or ```signature```  is empty, a message of error is returned in
 {"error": "address key is empty."}
 ```
 
-If there is no [request pending of validation](./README.md#/requestValidation/) for the informed address, the method will return a message of error.
+If there is no [request pending of validation](./README.md#requestvalidation) for the informed address, the method will return a message of error.
 
 ```json
 {"error":"request validation not found or expired."}
@@ -202,7 +202,7 @@ If there is no [request pending of validation](./README.md#/requestValidation/) 
 
 #### /block/
 
-creates a new Block. An user must have an [valid request](./README.md#/message-signature/validate/) upon the POST of the block, otherwise it will not be included
+creates a new Block. An user must have an [valid request](./README.md#message-signaturevalidate) upon the POST of the block, otherwise it will not be included
 
 ##### Parameters
 
@@ -227,7 +227,7 @@ Example of input below.
 
 ##### Result
 
-The request return the block put on the chain. It's similar to the JSON returned by [/block/h](./README.md#/block/h), except that **there is no field storyDecode**, since this is a field created only on query returns.
+The request return the block put on the chain. It's similar to the JSON returned by [/block/h](./README.md#blockh), except that **there is no field storyDecode**, since this is a field created only on query returns.
 
 In case there is problem with input, there should distinct errors:
 
@@ -267,7 +267,7 @@ When there are other fields than specified in parameters
 {"error": "unexpected field ${field[i]} found in request. Block not created"}
 ```
 
-In the case there is no [valid request](./README.md#/message-signature/validate/) of that address to post on the chain, the user will receive the following message.
+In the case there is no [valid request](./README.md#message-signaturevalidate) of that address to post on the chain, the user will receive the following message.
 
 ```json
 {"error":"validation not found or expired."}
