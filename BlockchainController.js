@@ -27,7 +27,7 @@ class BlockController {
     // Automatic routing register
     // If a object function starts with 'get' or 'post', it is executed, registering its routing on the server.
     Object.getOwnPropertyNames(this.__proto__).forEach(attr => {
-      if (typeof(this[attr]) == 'function') {
+      if (typeof (this[attr]) == 'function') {
         if (attr.startsWith('get') || attr.startsWith('post')) {
           this[attr]()
         }
@@ -93,7 +93,7 @@ class BlockController {
           console.log(`block ${request.params.address} not found`)
           return `{"error": "no Block in the chain have this address."}`
         }
-        blocks.map((block) => {return block.decodeStory()})
+        blocks.map((block) => { return block.decodeStory() })
         return blocks
       }
     })
@@ -135,7 +135,7 @@ class BlockController {
    * @return {boolean} is_validStory
    */
   _isValidStarStory(story) {
-    let ascii_range =  /^[\x00-\x7F]*$/
+    let ascii_range = /^[\x00-\x7F]*$/
     if (!ascii_range.test(story) || Buffer.byteLength(story) > MAX_STRING_FIELD_BYTE_SIZE) {
       throw new TypeError(`{"error":"story exceeds maximum length of 500 bytes or isn't ASCII encoded}"`)
     }
@@ -177,14 +177,14 @@ class BlockController {
         }
         //TODO Verify that the "address" that send the Star was validated in the previous steps, if not respond back with an error.
         let address = request.payload.address
-        if(this.mempoolValid[address] == null) {
+        if (this.mempoolValid[address] == null) {
           return '{"error":"validation not found or expired."}'
         } else {
           this.mempoolValid[address] = null
         }
         let blockAux = new Block.Block(request.payload);
         await this.blockChain.addBlock(blockAux)
-        return JSON.stringify(blockAux)
+        return blockAux
       }
     });
   }
@@ -196,7 +196,7 @@ class BlockController {
     this.server.route({
       method: 'POST',
       path: '/requestValidation/',
-      handler: (request, h) => {
+      handler: async (request, h) => {
         try {
           this._isEmptyData(request.payload, 'address')
         } catch (err) {
@@ -216,7 +216,7 @@ class BlockController {
     this.server.route({
       method: 'POST',
       path: '/message-signature/validate/',
-      handler: (request, h) => {
+      handler: async (request, h) => {
         try {
           this._isEmptyData(request.payload, ['address', 'signature'])
         } catch (err) {
@@ -235,29 +235,6 @@ class BlockController {
       }
     })
   }
-
-  /**
-  * Help method to initialized Mock dataset, adds 10 test blocks to the blocks array
-  */
-  initializeMockData() {
-    this.blockChain.getBlockHeight().then((index) => {
-      let self = this
-      if (index > 0) {
-        return
-      }
-      function theLoop(i) {
-        setTimeout(function () {
-          let blockTest = new Block.Block('Test Block - ' + (i + 1));
-          self.blockChain.addBlock(blockTest).then((result) => {
-            console.log(result);
-            i++;
-            if (i < 10) theLoop(i);
-          });
-        }, 300);
-      };
-      theLoop(0)
-    })
-  }
 }
 
 /**
@@ -265,4 +242,4 @@ class BlockController {
 * @param {*} server
 * @param {boolean} populate_data
 */
-module.exports = (server) => { return new BlockController(server);}
+module.exports = (server) => { return new BlockController(server); }
